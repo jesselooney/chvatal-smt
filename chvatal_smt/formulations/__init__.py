@@ -1,0 +1,2 @@
+from .inf import inf
+

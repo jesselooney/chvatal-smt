@@ -2,6 +2,7 @@ import time
 from pysmt.shortcuts import Solver
 from typing import Callable
 from pysmt.solvers.solver import Model
+from .formulations import inf
 
 
 def solve_with_encoding(
@@ -12,12 +13,17 @@ def solve_with_encoding(
         encoding(solver, n)
 
         start_time = time.perf_counter()
-        solver.solve()
+        is_satisfiable = solver.solve()
         end_time = time.perf_counter()
 
         runtime = end_time - start_time
 
-        model = solver.get_model()
+        model = solver.get_model() if is_satisfiable else None
 
     return model, runtime
 
+
+if __name__ == "__main__":
+    model, runtime = solve_with_encoding(inf, 3)
+    print(model)
+    print(runtime)
