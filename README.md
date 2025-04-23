@@ -21,7 +21,7 @@ pysmt-install --z3
 
 Now you should be able to run one of the files:
 ```
-python chvatal_smt/chvatal_inf.py
+python -m chvatal_smt.timing
 ```
 
 # Development
