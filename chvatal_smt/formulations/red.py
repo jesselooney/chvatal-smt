@@ -7,18 +7,16 @@ et al.'s MILP implementation.
 import time
 import sys
 from ..helpers import powerset
-from collections.abc import Iterable, Set
 from pysmt.typing import INT
-from pysmt.shortcuts import Symbol, Plus, And, get_model, Solver, Int, Equals
+from pysmt.shortcuts import Symbol, Plus, And, Solver, Int, Equals
 
 
 def red(n: int, solver: Solver):
-    """Returns True iff downsets $D$ such that $|U(D)| \le n$ satisfy Chvatal's conjecture.
-    """
+    """Returns True iff downsets $D$ such that $|U(D)| \le n$ satisfy Chvatal's conjecture."""
 
     """Setup"""
     # N is $[n] = {1, 2, ..., n}$.
-    N = list(range(1, n+1))
+    N = list(range(1, n + 1))
     # P is $2^[n]$.
     P = list(map(set, powerset(N)))
     # I is an index set for P, so that each element of P corresponds to an integer.
@@ -29,10 +27,14 @@ def red(n: int, solver: Solver):
     y = [Symbol(f"y{i}", INT) for i in I]
     z = Symbol("z", INT)
     for i in I:
-        solver.add_assertion(And(
-            0 <= x[i], x[i] <= 1,
-            0 <= y[i], y[i] <= 1,
-        ))
+        solver.add_assertion(
+            And(
+                0 <= x[i],
+                x[i] <= 1,
+                0 <= y[i],
+                y[i] <= 1,
+            )
+        )
     solver.add_assertion(z >= 0)
 
     """Objective function"""
@@ -94,18 +96,17 @@ if __name__ == "__main__":
         n = 6
         if len(sys.argv) >= 2:
             n = int(sys.argv[1])
-    
+
         print(f"Checking the Conjecture for {n=}")
-   
+
         startTime = time.perf_counter()
         does_conjecture_hold = red(n, solver)
         stopTime = time.perf_counter()
 
         runtime = stopTime - startTime
         print(f"Finished in {runtime:.3f} s")
-    
+
         if does_conjecture_hold:
             print("Conjecture holds")
         else:
             print("Conjecture fails")
-
