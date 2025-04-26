@@ -36,10 +36,8 @@ def opt(n: int, solver: Solver):
     solver.add_assertion(z >= 0)
 
     """Objective function"""
-    # TODO: I still have concerns about the validity of the proof if $z$ is
-    # included in the summation.
     # The cost function to be maximized (3a).
-    cost = Plus(y[s] - z for s in I if len(P[s]) != 0)
+    cost = Plus(y[s] for s in I if len(P[s]) != 0) - z
 
     """Model constraints"""
     # $S(y)$ is an intersecting family (3b).
