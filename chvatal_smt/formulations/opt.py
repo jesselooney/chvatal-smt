@@ -5,89 +5,80 @@ et al.'s MILP implementation.
 """
 
 import time
+import sys
 from ..helpers import powerset
 from collections.abc import Iterable, Set
 from pysmt.typing import INT
 from pysmt.shortcuts import Symbol, Plus, And, get_model, Solver, Int, Equals
 
-n = 4
 
-# N is $[n]$
-N = range(0, n)
+def opt(n: int, solver: Solver):
+    """Returns True iff downsets $D$ such that $|U(D)| \le n$ satisfy Chvatal's conjecture.
+    """
 
-# P is $2^[n]$
-P = list(map(set, powerset(N)))
+    """Setup"""
+    # N is $[n] = {1, 2, ..., n}$.
+    N = list(range(1, n+1))
+    # P is $2^[n]$.
+    P = list(map(set, powerset(N)))
+    # I is an index set for P, so that each element of P corresponds to an integer.
+    I = range(0, len(P))
 
-# I is an index set for P, so that each element of P corresponds to an integer.
-I = range(0, len(P))
+    """Variables and domain constraints"""
+    x = [Symbol(f"x{i}", INT) for i in I]
+    y = [Symbol(f"y{i}", INT) for i in I]
+    z = Symbol("z", INT)
+    for i in I:
+        solver.add_assertion(And(
+            0 <= x[i], x[i] <= 1,
+            0 <= y[i], y[i] <= 1,
+        ))
+    solver.add_assertion(z >= 0)
 
-x = [Symbol(f"x{i}", INT) for i in I]
-y = [Symbol(f"y{i}", INT) for i in I]
-z = Symbol("z", INT)
+    """Objective function"""
+    # TODO: I still have concerns about the validity of the proof if $z$ is
+    # included in the summation.
+    # The cost function to be maximized (3a).
+    cost = Plus(y[s] - z for s in I if len(P[s]) != 0)
 
-# In the following, I have aimed to match inequalities (1b-1e) in Eifler et al.
-# as faithfully as possible. Compare this code to their ZIMPL implementation
-# which differs slightly from their writeup.
+    """Model constraints"""
+    # $S(y)$ is an intersecting family (3b).
+    for t in I:
+        for s in I:
+            if len(P[t]) != 0 and len(P[s]) != 0 and len(P[t] & P[s]) == 0:
+                solver.add_assertion(y[t] + y[s] <= 1)
 
-# Constrain x's and y's to [0, 1]
-domain_ineq = []
-for s in I:
-    domain_ineq.append(0 <= x[s])
-    domain_ineq.append(x[s] <= 1)
-    domain_ineq.append(0 <= y[s])
-    domain_ineq.append(y[s] <= 1)
+    # $z$ is at least the cardinality of the largest star in $S(x)$ (3c).
+    for i in N:
+        # The cardinality of the largest star on $i$ in $S(x)$
+        star_cardinality = Plus(x[s] for s in I if i in P[s])
+        solver.add_assertion(star_cardinality <= z)
 
-domain_ineq.append(z >= 0)
+    # $S(x)$ contains the powerset of $S(y)$ (3d).
+    for t in I:
+        for s in I:
+            if P[s] <= P[t]:
+                solver.add_assertion(y[t] <= x[s])
 
-# intersecting inequalities (3b)
-intersecting_ineq = []
-# Because addition is commutative, we currently generate duplicate constraints.
-for t in I:
-    for s in I:
-        # The requirements that P[t] and P[s] are nonempty may be able to be
-        # omitted? This is what the authors do in their implementation.
-        if len(P[t]) != 0 and len(P[s]) != 0 and len(P[t] & P[s]) == 0:
-            intersecting_ineq.append(y[t] + y[s] <= 1)
+    """Checking the Conjecture"""
+    # Since this is a maximization problem, the cost of an optimal solution is
+    # zero iff there exists a feasible solution with zero cost, and no solution
+    # with positive cost is feasible.
+    is_zero_feasible = solver.solve([Equals(cost, Int(0))])
+    is_positive_feasible = solver.solve([cost > 0])
 
-# star inequalities (3c)
-star_ineq = []
-for i in N:
-    star_cardinality = Plus([x[s] for s in I if i in P[s]])
-    star_ineq.append(
-        star_cardinality <= z
-    )
+    return is_zero_feasible and not is_positive_feasible
 
-# generation inequalities (3d)
-generation_ineq = []
-for t in I:
-    for s in I:
-        if P[s] <= P[t]:
-            generation_ineq.append(y[t] <= x[s])
-
-constraints = And(
-    domain_ineq + intersecting_ineq + star_ineq + generation_ineq
-)
 
 with Solver() as solver:
-    solver.add_assertion(constraints)
-   
-    # TODO: Is this the correct objective function? Unclear whether the sum is
-    # over just the y_S or over (y_S - z). 
-    objective_func = Plus(y[s] - z for s in I if len(P[s]) != 0)
-   
-    startTime = time.perf_counter() 
-    is_zero_feasible = solver.solve([Equals(objective_func, Int(0))])
-    is_positive_feasible = solver.solve([objective_func > 0])
-    stopTime = time.perf_counter()
+    n = 6
+    if len(sys.argv) >= 2:
+        n = sys.argv[1]
 
-    runtime = stopTime - startTime
-    print(f"{runtime=}")
+    print(f"Checking the Conjecture for {n=}")
 
-    # The Conjecture holds for downsets of cardinality at most n iff 0 is the
-    # optimal value---that is, if 0 is a feasible objective value and no
-    # larger objective value is feasible.
-    if is_zero_feasible and not is_positive_feasible:
+    if opt(n, solver):
         print("Conjecture holds")
     else:
         print("Conjecture fails")
-    
+
