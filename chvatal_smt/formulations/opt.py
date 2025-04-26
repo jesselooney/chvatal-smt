@@ -69,16 +69,23 @@ def opt(n: int, solver: Solver):
 
     return is_zero_feasible and not is_positive_feasible
 
+if __name__ == "__main__":
+    with Solver() as solver:
+        n = 6
+        if len(sys.argv) >= 2:
+            n = int(sys.argv[1])
+    
+        print(f"Checking the Conjecture for {n=}")
+   
+        startTime = time.perf_counter()
+        does_conjecture_hold = opt(n, solver)
+        stopTime = time.perf_counter()
 
-with Solver() as solver:
-    n = 6
-    if len(sys.argv) >= 2:
-        n = int(sys.argv[1])
-
-    print(f"Checking the Conjecture for {n=}")
-
-    if opt(n, solver):
-        print("Conjecture holds")
-    else:
-        print("Conjecture fails")
+        runtime = stopTime - startTime
+        print(f"Finished in {runtime:.3f} s")
+    
+        if does_conjecture_hold:
+            print("Conjecture holds")
+        else:
+            print("Conjecture fails")
 
