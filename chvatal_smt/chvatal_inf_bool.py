@@ -5,8 +5,7 @@ et al.'s MILP implementation.
 """
 
 from helpers import powerset
-from collections.abc import Iterable, Set
-from pysmt.typing import INT, BOOL
+from pysmt.typing import BOOL
 from pysmt.shortcuts import Symbol, Plus, And, get_model, Or, Not
 
 
@@ -34,7 +33,9 @@ downset_ineq = []
 for t in I:
     for s in I:
         if P[s] < P[t]:
-            downset_ineq.append(Or(And(x[t], x[s]), And(Not(x[t]), x[s]), And(Not(x[t]), Not(x[s]))))
+            downset_ineq.append(
+                Or(And(x[t], x[s]), And(Not(x[t]), x[s]), And(Not(x[t]), Not(x[s])))
+            )
             # downset_ineq.append(x[t] <= x[s])
 
 # intersecting inequalities (1c)
@@ -53,7 +54,9 @@ for t in I:
 containment_ineq = []
 for s in I:
     # containment_ineq.append(y[s] <= x[s])
-    containment_ineq.append(Or(And(y[s], x[s]), And(Not(y[s]), x[s]), And(Not(y[s]), Not(x[s]))))
+    containment_ineq.append(
+        Or(And(y[s], x[s]), And(Not(y[s]), x[s]), And(Not(y[s]), Not(x[s])))
+    )
 
 # star inequalities (1e)
 star_ineq = []
@@ -64,9 +67,7 @@ for i in N:
     downset_star_cardinality = Plus([x[s] for s in I if i in P[s]])
     star_ineq.append(downset_star_cardinality + 1 <= intersecting_family_cardinality)
 
-formula = And(
-    downset_ineq + intersecting_ineq + containment_ineq + star_ineq
-)
+formula = And(downset_ineq + intersecting_ineq + containment_ineq + star_ineq)
 
 model = get_model(formula)
 if model is not None:

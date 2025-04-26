@@ -1,11 +1,10 @@
 """This file implements an SMT encoding of Eifler et al.'s reduction-based
 formulation, following the formulae in the paper as closely as possible. Where
-applicable, this file follows the conventions in chvatal_infprob_red.zpl and 
+applicable, this file follows the conventions in chvatal_infprob_red.zpl and
 chvatal_optprob_red.zpl in Eifler et al.'s MILP implementation.
 """
 
 from helpers import powerset
-from collections.abc import Iterable, Set
 
 from pysmt.typing import INT
 from pysmt.shortcuts import Symbol, Plus, And, get_model, Equals, Int, GT
@@ -104,11 +103,23 @@ for s in I:
 
 
 formula = And(
-    domain_ineq + intersecting_ineq + star_ineq + downset_ineq + corollary_ineq + constraints + optimal_ineq
+    domain_ineq
+    + intersecting_ineq
+    + star_ineq
+    + downset_ineq
+    + corollary_ineq
+    + constraints
+    + optimal_ineq
 )
 
 formula2 = And(
-    domain_ineq + intersecting_ineq + star_ineq + downset_ineq + corollary_ineq + constraints + optimal_eq
+    domain_ineq
+    + intersecting_ineq
+    + star_ineq
+    + downset_ineq
+    + corollary_ineq
+    + constraints
+    + optimal_eq
 )
 
 # run the solver

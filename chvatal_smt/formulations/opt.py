@@ -4,8 +4,6 @@ applicable, this file follows the conventions in chvatal_optprob.zpl in Eifler
 et al.'s MILP implementation.
 """
 
-import time
-import sys
 from ..helpers import powerset
 from pysmt.typing import INT
 from pysmt.shortcuts import Symbol, Plus, And, Solver, Int, Equals
@@ -68,24 +66,3 @@ def opt(n: int, solver: Solver):
     is_positive_feasible = solver.solve([cost > 0])
 
     return is_zero_feasible and not is_positive_feasible
-
-
-if __name__ == "__main__":
-    with Solver() as solver:
-        n = 6
-        if len(sys.argv) >= 2:
-            n = int(sys.argv[1])
-
-        print(f"Checking the Conjecture for {n=}")
-
-        startTime = time.perf_counter()
-        does_conjecture_hold = opt(n, solver)
-        stopTime = time.perf_counter()
-
-        runtime = stopTime - startTime
-        print(f"Finished in {runtime:.3f} s")
-
-        if does_conjecture_hold:
-            print("Conjecture holds")
-        else:
-            print("Conjecture fails")

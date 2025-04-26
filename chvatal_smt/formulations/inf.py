@@ -5,9 +5,8 @@ et al.'s MILP implementation.
 """
 
 from ..helpers import powerset
-from collections.abc import Iterable, Set
 from pysmt.typing import INT
-from pysmt.shortcuts import Symbol, Plus, And, get_model, Solver
+from pysmt.shortcuts import Symbol, Plus, And, Solver
 
 
 def inf(solver: Solver, n: int):
