@@ -73,7 +73,7 @@ def opt(n: int, solver: Solver):
 with Solver() as solver:
     n = 6
     if len(sys.argv) >= 2:
-        n = sys.argv[1]
+        n = int(sys.argv[1])
 
     print(f"Checking the Conjecture for {n=}")
 
