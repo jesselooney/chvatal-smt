@@ -19,9 +19,9 @@ pysmt-install --z3
 ```
 *Make sure to accept the licenses by entering 'y'.*
 
-Now you should be able to run one of the files:
+Now you should be able to run the package:
 ```
-python -m chvatal_smt.timing
+python -m chvatal_smt opt 3
 ```
 
 # Development
