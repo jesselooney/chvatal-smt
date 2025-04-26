@@ -1,7 +1,7 @@
 import time
 import sys
 from pysmt.shortcuts import Solver
-from .formulations import opt, red
+from .formulations import inf, opt, red
 
 
 if __name__ == "__main__":
@@ -13,7 +13,7 @@ if __name__ == "__main__":
             n = int(sys.argv[2])
             formulation_name = sys.argv[1]
 
-        formulations = [opt, red]
+        formulations = [inf, opt, red]
         formulation_dict = {f.__name__: f for f in formulations}
 
         formulation = formulation_dict.get(formulation_name)

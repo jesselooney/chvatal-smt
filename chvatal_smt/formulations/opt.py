@@ -10,7 +10,7 @@ from pysmt.shortcuts import Symbol, Plus, And, Solver, Int, Equals
 
 
 def opt(n: int, solver: Solver):
-    """Returns True iff downsets $D$ such that $|U(D)| \le n$ satisfy Chvatal's conjecture."""
+    """Returns True iff downsets D such that |U(D)| <= n satisfy Chvatal's conjecture."""
 
     """Setup"""
     # N is [n] = {1, 2, ..., n}.
