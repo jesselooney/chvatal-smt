@@ -13,9 +13,9 @@ def red(n: int, solver: Solver):
     """Returns True iff downsets $D$ such that $|U(D)| \le n$ satisfy Chvatal's conjecture."""
 
     """Setup"""
-    # N is $[n] = {1, 2, ..., n}$.
+    # N is [n] = {1, 2, ..., n}.
     N = list(range(1, n + 1))
-    # P is $2^[n]$.
+    # P is 2^[n].
     P = list(map(set, powerset(N)))
     # I is an index set for P, so that each element of P corresponds to an integer.
     I = range(0, len(P))
@@ -40,19 +40,19 @@ def red(n: int, solver: Solver):
     cost = Plus(y[s] for s in I if len(P[s]) != 0) - z
 
     """Model constraints"""
-    # $S(y)$ is an intersecting family (7b).
+    # S(y)\{0} is an intersecting family (7b).
     for t in I:
         for s in I:
             if len(P[t]) != 0 and len(P[s]) != 0 and len(P[t] & P[s]) == 0:
                 solver.add_assertion(y[t] + y[s] <= 1)
 
-    # $z$ is at least the cardinality of the largest star in $S(x)$ (7c).
+    # z is at least the cardinality of the largest star in S(x) (7c).
     for i in N:
-        # The cardinality of the largest star on $i$ in $S(x)$
+        # The cardinality of the largest star on i in S(x)
         star_cardinality = Plus(x[s] for s in I if i in P[s])
         solver.add_assertion(star_cardinality <= z)
 
-    # $S(x)$ contains the powerset of $S(y)$ (7d).
+    # S(x) contains the powerset of S(y) (7d).
     for t in I:
         for s in I:
             if P[s] <= P[t]:
