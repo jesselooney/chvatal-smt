@@ -36,11 +36,15 @@ z = Symbol("z", INT)
 # objective function
 cost = Plus(y[i] - z for i in I)
 
+# ===
+# model constraints
+# ===
+
 # generating inequality
 gen_ineq = []
 for t in I:
     for s in I:
-        if len(P[s] | P[t]) == len(P[t]):
+        if len(P[s] | P[t]) == len(P[t]): 
             gen_ineq.append(y[t] - x[s] <= 0)
 
 # intersecting family
@@ -50,14 +54,32 @@ for t in I:
         if len(P[t] & P[s]) == 0:
             intersect_ineq.append(y[t] + y[s] <= 1)
 
-# smallerstar
+# z has to be greater or equal than the size of every star
 smallerstar_ineq = []
 for i in N:
     star_size = Plus(x[s] for s in I if i in P[s])
     smallerstar_ineq.append(star_size - z <= 0)
 
+# ===
+# additional inequalities
+# ===
+
+notps_ineq = []
+#for i in I:
+#    if len(P[i]) == n:
+#        notps_ineq.append(y[i] <= 0)
+
+singleton_ineq = []
+for s in I:
+    if len(P[s]) == 1:
+        singleton_ineq.append(Equals(x[s], Int(1)))
+
+# ===
+# running the solver
+# ===
+
 constraints = And(
-    domain_ineq + gen_ineq + intersect_ineq + smallerstar_ineq
+    domain_ineq + gen_ineq + intersect_ineq + smallerstar_ineq + notps_ineq + singleton_ineq
 )
 
 with Solver() as solver:
