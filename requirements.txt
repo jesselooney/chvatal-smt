@@ -1,3 +1,4 @@
+pypblib==0.0.4
 PySMT==0.9.6
 python-sat==1.8.dev16
 ruff==0.11.4
