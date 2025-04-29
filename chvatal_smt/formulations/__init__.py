@@ -1,5 +1,6 @@
 from .inf import inf
 from .opt import opt
 from .red import red
+from .inf_sat import inf_sat
 
-__all__ = [inf, opt, red]
+formulations = [inf, opt, red, inf_sat]

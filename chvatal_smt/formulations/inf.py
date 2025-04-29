@@ -9,7 +9,7 @@ from pysmt.typing import INT
 from pysmt.shortcuts import Symbol, Plus, And, Solver
 
 
-def inf(n: int, solver: Solver):
+def inf(n: int):
     """Returns True iff downsets D such that |U(D)| <= n satisfy Chvatal's conjecture."""
 
     """Setup"""
@@ -19,6 +19,8 @@ def inf(n: int, solver: Solver):
     P = list(map(set, powerset(N)))
     # I is an index set for P, so that each element of P corresponds to an integer.
     I = range(0, len(P))
+
+    solver = Solver()
 
     """Variables and domain constraints"""
     x = [Symbol(f"x{i}", INT) for i in I]
@@ -57,4 +59,8 @@ def inf(n: int, solver: Solver):
 
     """Checking the Conjecture"""
     # The Conjecture holds iff these constraints are unsatisfiable.
-    return not solver.solve()
+    is_satisfiable = solver.solve()
+
+    solver.exit()
+
+    return not is_satisfiable

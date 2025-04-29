@@ -9,7 +9,7 @@ from pysmt.typing import INT
 from pysmt.shortcuts import Symbol, Plus, And, Solver, Int, Equals
 
 
-def opt(n: int, solver: Solver):
+def opt(n: int):
     """Returns True iff downsets D such that |U(D)| <= n satisfy Chvatal's conjecture."""
 
     """Setup"""
@@ -19,6 +19,8 @@ def opt(n: int, solver: Solver):
     P = list(map(set, powerset(N)))
     # I is an index set for P, so that each element of P corresponds to an integer.
     I = range(0, len(P))
+
+    solver = Solver()
 
     """Variables and domain constraints"""
     x = [Symbol(f"x{i}", INT) for i in I]
@@ -64,5 +66,7 @@ def opt(n: int, solver: Solver):
     # with positive cost is feasible.
     is_zero_feasible = solver.solve([Equals(cost, Int(0))])
     is_positive_feasible = solver.solve([cost > 0])
+
+    solver.exit()
 
     return is_zero_feasible and not is_positive_feasible

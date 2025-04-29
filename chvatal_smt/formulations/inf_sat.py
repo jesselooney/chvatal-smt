@@ -10,7 +10,7 @@ from ..helpers import powerset
 from pysat.solvers import Cadical195
 from pysat.pb import PBEnc
 from pysat.formula import IDPool
-from pypblib import pblib
+
 
 def inf_sat(n: int):
     """Returns True iff downsets D such that |U(D)| <= n satisfy Chvatal's conjecture."""
@@ -56,7 +56,7 @@ def inf_sat(n: int):
         lits = intersecting_family + star
         # The weights mean that the sum will encode the cardinality of the
         # intersecting family minus the cardinality of the star.
-        weights = [1]*len(intersecting_family) + [-1]*len(star)
+        weights = [1] * len(intersecting_family) + [-1] * len(star)
 
         # TODO: verify that this is doing what I want it to
         cnfplus = PBEnc.geq(lits=lits, weights=weights, bound=1, vpool=vpool)
@@ -75,9 +75,8 @@ if __name__ == "__main__":
     start = time.perf_counter()
     result = inf_sat(int(sys.argv[1]))
     end = time.perf_counter()
-    print(f"Finished in {end-start} s")
+    print(f"Finished in {end - start} s")
     if result:
         print("Conjecture holds")
     else:
         print("Conjecture fails")
-
