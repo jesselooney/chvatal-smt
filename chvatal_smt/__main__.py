@@ -1,33 +1,48 @@
 import time
-import sys
+import argparse
 from .formulations import formulations
 
+formulation_dict = {f.__name__: f for f in formulations}
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        print(f"Usage: {sys.argv[0]} formulation n")
-        sys.exit(1)
-    else:
-        n = int(sys.argv[2])
-        formulation_name = sys.argv[1]
+    parser = argparse.ArgumentParser(
+        prog="chvatal_smt", description="Solve Chvatal's Conjecture using SAT or SMT"
+    )
+    parser.add_argument("formulation_name", choices=formulation_dict.keys())
+    parser.add_argument(
+        "n",
+        type=int,
+        help="The cardinality of the ground set on which to verify Chvatal's Conjecture",
+    )
+    parser.add_argument(
+        "-q", "--quiet", action="store_true", help="Suppress intermediate output"
+    )
 
-    formulation_dict = {f.__name__: f for f in formulations}
+    args = parser.parse_args()
+    formulation_name = args.formulation_name
+    n = args.n
+    quiet = args.quiet
 
     formulation = formulation_dict.get(formulation_name)
-    if formulation is None:
-        print(f"Invalid formulation identifier: {formulation_name}")
-        sys.exit(1)
+    assert formulation is not None
 
-    print(f"Checking the Conjecture for {n=} using formulation {formulation_name}")
+    if not quiet:
+        print(f"Checking the Conjecture for {n=} using formulation {formulation_name}")
 
-    startTime = time.perf_counter()
+    start_time = time.perf_counter()
     does_conjecture_hold = formulation(n)
-    stopTime = time.perf_counter()
+    stop_time = time.perf_counter()
 
-    runtime = stopTime - startTime
-    print(f"Finished in {runtime:.3f} s")
+    runtime = stop_time - start_time
 
-    if does_conjecture_hold:
-        print("Conjecture holds")
-    else:
-        print("Conjecture fails")
+    if not quiet:
+        print(f"Finished in {runtime:.3f} s")
+
+        if does_conjecture_hold:
+            print("Conjecture holds")
+        else:
+            print("Conjecture fails")
+
+    print(
+        f"formulation_name={formulation_name},{n=},{runtime=},{does_conjecture_hold=}"
+    )
