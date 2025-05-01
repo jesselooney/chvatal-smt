@@ -1,0 +1,7 @@
+formulation_name=red,n=5,runtime=0.05987873100093566,does_conjecture_hold=True
+formulation_name=inf_sat,n=5,runtime=0.23100545999477617,does_conjecture_hold=True
+formulation_name=inf,n=5,runtime=0.7585199220047798,does_conjecture_hold=True
+formulation_name=red,n=6,runtime=18.437749088014243,does_conjecture_hold=True
+formulation_name=opt,n=5,runtime=37.6806912329921,does_conjecture_hold=True
+formulation_name=inf_sat,n=6,runtime=38.29689887299901,does_conjecture_hold=True
+formulation_name=inf,n=6,runtime=8683.403726830991,does_conjecture_hold=True
