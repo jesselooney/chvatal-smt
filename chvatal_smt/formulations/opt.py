@@ -19,6 +19,7 @@ def opt(n: int):
     P = list(map(set, powerset(N)))
     # I is an index set for P, so that each element of P corresponds to an integer.
     I = range(0, len(P))
+    constraints = 0
 
     solver = Solver()
 
@@ -35,7 +36,9 @@ def opt(n: int):
                 y[i] <= 1,
             )
         )
+        constraints += 1
     solver.add_assertion(z >= 0)
+    constraints += 1
 
     """Objective function"""
     # The cost function to be maximized (3a).
@@ -47,18 +50,21 @@ def opt(n: int):
         for s in I:
             if len(P[t]) != 0 and len(P[s]) != 0 and len(P[t] & P[s]) == 0:
                 solver.add_assertion(y[t] + y[s] <= 1)
+                constraints += 1
 
     # z is at least the cardinality of the largest star in S(x) (3c).
     for i in N:
         # The cardinality of the largest star on i in S(x)
         star_cardinality = Plus(x[s] for s in I if i in P[s])
         solver.add_assertion(star_cardinality <= z)
+        constraints += 1
 
     # S(x) contains the powerset of S(y) (3d).
     for t in I:
         for s in I:
             if P[s] <= P[t]:
                 solver.add_assertion(y[t] <= x[s])
+                constraints += 1
 
     """Checking the Conjecture"""
     # Since this is a maximization problem, the cost of an optimal solution is
@@ -68,5 +74,6 @@ def opt(n: int):
     is_positive_feasible = solver.solve([cost > 0])
 
     solver.exit()
+    print(f"{constraints} constraints")
 
     return is_zero_feasible and not is_positive_feasible

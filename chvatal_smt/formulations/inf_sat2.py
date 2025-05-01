@@ -12,7 +12,7 @@ from pysat.pb import PBEnc
 from pysat.formula import IDPool
 
 
-def inf_sat(n: int):
+def inf_sat2(n: int):
     """Returns True iff downsets D such that |U(D)| <= n satisfy Chvatal's conjecture."""
 
     """Setup"""
@@ -61,13 +61,24 @@ def inf_sat(n: int):
         # TODO: verify that this is doing what I want it to
         cnfplus = PBEnc.geq(lits=lits, weights=weights, bound=1, vpool=vpool)
         clauses.extend(cnfplus.clauses)
+    
+    constraints = len(clauses) # don't count what comes after since that is just assigned variables, not really constraints
+    # (Should I be counting them??)
+
+    # Encodings of previously proven chvatal results
+    for t in I:
+        if 0 < len(P[t]) and len(P[t]) < 3:
+            clauses.append([-y[t]]) # constraint 7f
+        if len(P[t]) == 1:
+            clauses.append([x[t]]) # constraint 7g
+        elif P[t] <= set([1, 2, 3, 4]):
+            clauses.append([x[t]]) # constraint 7h
 
     """Checking the Conjecture"""
     solver = Cadical195(bootstrap_with=clauses)
     result = solver.solve()
     solver.delete()
 
-    constraints = len(clauses)
     print(f"{constraints} constraints")
 
     # The Conjecture holds iff these constraints are unsatisfiable.
@@ -76,7 +87,7 @@ def inf_sat(n: int):
 
 if __name__ == "__main__":
     start = time.perf_counter()
-    result = inf_sat(int(sys.argv[1]))
+    result = inf_sat2(int(sys.argv[1]))
     end = time.perf_counter()
     print(f"Finished in {end - start} s")
     if result:

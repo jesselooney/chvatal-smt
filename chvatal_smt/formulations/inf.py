@@ -19,6 +19,7 @@ def inf(n: int):
     P = list(map(set, powerset(N)))
     # I is an index set for P, so that each element of P corresponds to an integer.
     I = range(0, len(P))
+    constraints = 0
 
     solver = Solver()
 
@@ -34,6 +35,7 @@ def inf(n: int):
                 y[i] <= 1,
             )
         )
+        constraints += 1
 
     """Model constraints"""
     # The paper notes that we can use (3d) instead of (1b) and (1d).
@@ -42,12 +44,14 @@ def inf(n: int):
         for s in I:
             if P[s] <= P[t]:
                 solver.add_assertion(y[t] <= x[s])
+                constraints += 1
 
     # S(y)\{0} is an intersecting family (1c).
     for t in I:
         for s in I:
             if len(P[t]) != 0 and len(P[s]) != 0 and len(P[t] & P[s]) == 0:
                 solver.add_assertion(y[t] + y[s] <= 1)
+                constraints += 1
 
     # S(y)\{0} has greater cardinality than every star in S(x) (1e).
     for i in N:
@@ -56,11 +60,12 @@ def inf(n: int):
         # The cardinality of the intersecting family S(y)\{0}
         intersecting_cardinality = Plus(y[s] for s in I if len(P[s]) != 0)
         solver.add_assertion(star_cardinality + 1 <= intersecting_cardinality)
+        constraints += 1
 
     """Checking the Conjecture"""
     # The Conjecture holds iff these constraints are unsatisfiable.
     is_satisfiable = solver.solve()
 
     solver.exit()
-
+    print(f"{constraints} constraints")
     return not is_satisfiable
