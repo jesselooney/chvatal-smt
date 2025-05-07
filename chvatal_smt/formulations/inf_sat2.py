@@ -6,13 +6,14 @@ et al.'s MILP implementation.
 
 import sys
 import time
-from ..helpers import powerset
+from ..helpers import powerset, FormulationResult
 from pysat.solvers import Cadical195
 from pysat.pb import PBEnc
-from pysat.formula import IDPool
+from pysat.formula import IDPool, CNF
+import time
 
 
-def inf_sat2(n: int):
+def inf_sat2(n: int) -> FormulationResult:
     """Returns True iff downsets D such that |U(D)| <= n satisfy Chvatal's conjecture."""
 
     """Setup"""
@@ -62,9 +63,6 @@ def inf_sat2(n: int):
         cnfplus = PBEnc.geq(lits=lits, weights=weights, bound=1, vpool=vpool)
         clauses.extend(cnfplus.clauses)
     
-    constraints = len(clauses) # don't count what comes after since that is just assigned variables, not really constraints
-    # (Should I be counting them??)
-
     # Encodings of previously proven chvatal results
     for t in I:
         if 0 < len(P[t]) and len(P[t]) < 3:
@@ -75,22 +73,15 @@ def inf_sat2(n: int):
             clauses.append([x[t]]) # constraint 7h
 
     """Checking the Conjecture"""
+    formula = CNF(from_clauses=clauses)
     solver = Cadical195(bootstrap_with=clauses)
+
+    start_time = time.perf_counter()
     result = solver.solve()
+    end_time = time.perf_counter()
+
     solver.delete()
 
-    print(f"{constraints} constraints")
-
     # The Conjecture holds iff these constraints are unsatisfiable.
-    return not result
+    return FormulationResult(name="inf_sat_red", n=n, does_conjecture_hold=not result, constraint_count = len(clauses), runtime = end_time - start_time)
 
-
-if __name__ == "__main__":
-    start = time.perf_counter()
-    result = inf_sat2(int(sys.argv[1]))
-    end = time.perf_counter()
-    print(f"Finished in {end - start} s")
-    if result:
-        print("Conjecture holds")
-    else:
-        print("Conjecture fails")

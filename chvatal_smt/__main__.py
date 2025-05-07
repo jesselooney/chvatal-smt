@@ -1,4 +1,3 @@
-import time
 import argparse
 from .formulations import formulations
 
@@ -29,20 +28,14 @@ if __name__ == "__main__":
     if not quiet:
         print(f"Checking the Conjecture for {n=} using formulation {formulation_name}")
 
-    start_time = time.perf_counter()
-    does_conjecture_hold = formulation(n)
-    stop_time = time.perf_counter()
-
-    runtime = stop_time - start_time
+    result = formulation(n)
 
     if not quiet:
-        print(f"Finished in {runtime:.3f} s")
+        print(f"Finished in {result.runtime:.3f} s")
 
-        if does_conjecture_hold:
+        if result.does_conjecture_hold:
             print("Conjecture holds")
         else:
             print("Conjecture fails")
 
-    print(
-        f"formulation_name={formulation_name},{n=},{runtime=},{does_conjecture_hold=}"
-    )
+    print(result)

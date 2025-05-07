@@ -4,12 +4,13 @@ applicable, this file follows the conventions in chvatal_optprob.zpl in Eifler
 et al.'s MILP implementation.
 """
 
-from ..helpers import powerset
+from ..helpers import powerset, FormulationResult
 from pysmt.typing import INT
 from pysmt.shortcuts import Symbol, Plus, And, Solver, Int, Equals
+import time
 
 
-def opt(n: int):
+def opt(n: int) -> FormulationResult:
     """Returns True iff downsets D such that |U(D)| <= n satisfy Chvatal's conjecture."""
 
     """Setup"""
@@ -19,8 +20,8 @@ def opt(n: int):
     P = list(map(set, powerset(N)))
     # I is an index set for P, so that each element of P corresponds to an integer.
     I = range(0, len(P))
-    constraints = 0
 
+    constraints = 0
     solver = Solver()
 
     """Variables and domain constraints"""
@@ -36,7 +37,8 @@ def opt(n: int):
                 y[i] <= 1,
             )
         )
-        constraints += 1
+        constraints += 4
+
     solver.add_assertion(z >= 0)
     constraints += 1
 
@@ -70,10 +72,11 @@ def opt(n: int):
     # Since this is a maximization problem, the cost of an optimal solution is
     # zero iff there exists a feasible solution with zero cost, and no solution
     # with positive cost is feasible.
+    start_time = time.perf_counter()
     is_zero_feasible = solver.solve([Equals(cost, Int(0))])
     is_positive_feasible = solver.solve([cost > 0])
+    end_time = time.perf_counter()
 
     solver.exit()
-    print(f"{constraints} constraints")
 
-    return is_zero_feasible and not is_positive_feasible
+    return FormulationResult(name="opt",n=n,does_conjecture_hold=is_zero_feasible and not is_positive_feasible, constraint_count=constraints, runtime = end_time-start_time)

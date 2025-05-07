@@ -4,12 +4,13 @@ applicable, this file follows the conventions in chvatal_optprob.zpl in Eifler
 et al.'s MILP implementation.
 """
 
-from ..helpers import powerset
+from ..helpers import powerset, FormulationResult
 from pysmt.typing import INT
 from pysmt.shortcuts import Symbol, Plus, And, Solver
+import time
 
 
-def inf(n: int):
+def inf(n: int) -> FormulationResult:
     """Returns True iff downsets D such that |U(D)| <= n satisfy Chvatal's conjecture."""
 
     """Setup"""
@@ -19,8 +20,8 @@ def inf(n: int):
     P = list(map(set, powerset(N)))
     # I is an index set for P, so that each element of P corresponds to an integer.
     I = range(0, len(P))
-    constraints = 0
 
+    constraints = 0
     solver = Solver()
 
     """Variables and domain constraints"""
@@ -35,7 +36,7 @@ def inf(n: int):
                 y[i] <= 1,
             )
         )
-        constraints += 1
+        constraints += 4
 
     """Model constraints"""
     # The paper notes that we can use (3d) instead of (1b) and (1d).
@@ -64,8 +65,11 @@ def inf(n: int):
 
     """Checking the Conjecture"""
     # The Conjecture holds iff these constraints are unsatisfiable.
+
+    start_time = time.perf_counter()
     is_satisfiable = solver.solve()
+    end_time = time.perf_counter()
 
     solver.exit()
-    print(f"{constraints} constraints")
-    return not is_satisfiable
+
+    return FormulationResult(name="inf", n=n, does_conjecture_hold=not is_satisfiable, constraint_count=constraints, runtime=end_time - start_time)
