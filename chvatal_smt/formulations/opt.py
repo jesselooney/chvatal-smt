@@ -10,7 +10,7 @@ from pysmt.shortcuts import Symbol, Plus, And, Solver, Int, Equals
 import time
 
 
-def opt(n: int) -> FormulationResult:
+def opt(n: int, *, should_solve=True) -> FormulationResult:
     """Setup"""
     # N is [n] = {1, 2, ..., n}.
     N = list(range(1, n + 1))
@@ -70,17 +70,23 @@ def opt(n: int) -> FormulationResult:
     # Since this is a maximization problem, the cost of an optimal solution is
     # zero iff there exists a feasible solution with zero cost, and no solution
     # with positive cost is feasible.
-    start_time = time.perf_counter()
-    is_zero_feasible = solver.solve([Equals(cost, Int(0))])
-    is_positive_feasible = solver.solve([cost > 0])
-    end_time = time.perf_counter()
+    if should_solve:
+        start_time = time.perf_counter()
+        is_zero_feasible = solver.solve([Equals(cost, Int(0))])
+        is_positive_feasible = solver.solve([cost > 0])
+        end_time = time.perf_counter()
+        does_conjecture_hold = is_zero_feasible and not is_positive_feasible
+        runtime = end_time - start_time
+    else:
+        does_conjecture_hold = False
+        runtime = -1
 
     solver.exit()
 
     return FormulationResult(
         name="opt",
         n=n,
-        does_conjecture_hold=is_zero_feasible and not is_positive_feasible,
+        does_conjecture_hold=does_conjecture_hold,
         constraint_count=constraints,
-        runtime=end_time - start_time,
+        runtime=runtime,
     )

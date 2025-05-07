@@ -20,7 +20,13 @@ if __name__ == "__main__":
     parser.add_argument(
         "-d",
         "--dimacs-file",
-        help="Output SAT constraints to a DIMACS file instead of solving",
+        help="Output SAT constraints to a DIMACS file",
+    )
+    parser.add_argument(
+        "-n",
+        "--no-solve",
+        action="store_true",
+        help="Construct but do not solve the formulation",
     )
 
     args = parser.parse_args()
@@ -35,16 +41,18 @@ if __name__ == "__main__":
 
     if args.dimacs_file is not None:
         try:
-            result = formulation(args.n, dimacs_file=args.dimacs_file)
+            result = formulation(
+                args.n, should_solve=not args.no_solve, dimacs_file=args.dimacs_file
+            )
             sys.exit(0)
         except TypeError:
             raise Exception(
                 f"Formulation {args.formulation_name} does not support DIMACS output"
             )
     else:
-        result = formulation(args.n)
+        result = formulation(args.n, should_solve=not args.no_solve)
 
-    if not args.quiet:
+    if not args.no_solve and not args.quiet:
         print(f"Finished in {result.runtime:.3f} s")
 
         if result.does_conjecture_hold:

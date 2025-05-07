@@ -10,7 +10,7 @@ from pysmt.shortcuts import Symbol, Plus, And, Solver
 import time
 
 
-def inf(n: int) -> FormulationResult:
+def inf(n: int, *, should_solve=True) -> FormulationResult:
     """Setup"""
     # N is [n] = {1, 2, ..., n}.
     N = list(range(1, n + 1))
@@ -64,16 +64,22 @@ def inf(n: int) -> FormulationResult:
     """Checking the Conjecture"""
     # The Conjecture holds iff these constraints are unsatisfiable.
 
-    start_time = time.perf_counter()
-    is_satisfiable = solver.solve()
-    end_time = time.perf_counter()
+    if should_solve:
+        start_time = time.perf_counter()
+        is_satisfiable = solver.solve()
+        end_time = time.perf_counter()
+        does_conjecture_hold = not is_satisfiable
+        runtime = end_time - start_time
+    else:
+        does_conjecture_hold = False
+        runtime = -1
 
     solver.exit()
 
     return FormulationResult(
         name="inf",
         n=n,
-        does_conjecture_hold=not is_satisfiable,
+        does_conjecture_hold=does_conjecture_hold,
         constraint_count=constraints,
-        runtime=end_time - start_time,
+        runtime=runtime,
     )

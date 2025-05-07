@@ -11,7 +11,7 @@ from pysat.pb import PBEnc
 from pysat.formula import IDPool, CNF
 
 
-def inf_sat_red(n: int, *, dimacs_file=None) -> FormulationResult:
+def inf_sat_red(n: int, *, should_solve=True, dimacs_file=None) -> FormulationResult:
     """Setup"""
     # N is [n] = {1, 2, ..., n}.
     N = list(range(1, n + 1))
@@ -72,13 +72,18 @@ def inf_sat_red(n: int, *, dimacs_file=None) -> FormulationResult:
     if dimacs_file is not None:
         formula = CNF(from_clauses=clauses)
         formula.to_file(dimacs_file)
-        return
 
     solver = Cadical195(bootstrap_with=clauses)
 
-    start_time = time.perf_counter()
-    result = solver.solve()
-    end_time = time.perf_counter()
+    if should_solve:
+        start_time = time.perf_counter()
+        result = solver.solve()
+        end_time = time.perf_counter()
+        does_conjecture_hold = not result
+        runtime = end_time - start_time
+    else:
+        does_conjecture_hold = False
+        runtime = -1
 
     solver.delete()
 
@@ -86,7 +91,7 @@ def inf_sat_red(n: int, *, dimacs_file=None) -> FormulationResult:
     return FormulationResult(
         name="inf_sat_red",
         n=n,
-        does_conjecture_hold=not result,
+        does_conjecture_hold=does_conjecture_hold,
         constraint_count=len(clauses),
-        runtime=end_time - start_time,
+        runtime=runtime,
     )
