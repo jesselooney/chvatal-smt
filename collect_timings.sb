@@ -1,0 +1,32 @@
+#!/bin/bash
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH -c 116
+#SBATCH --output=results/%j/out.log
+#SBATCH --error=results/%j/err.log
+#SBATCH --job-name=chvatal_smt
+#SBATCH --time=12:00:00
+
+smt_formulations=("inf" "opt" "opt_red")
+sat_formulations=("inf_sat" "inf_sat_red")
+ns=(5)
+
+source .venv/bin/activate
+
+for n in "${ns[@]}"; do
+    for formulation in "${smt_formulations[@]}"; do 
+        srun --output="results/%j/$formulation-$n.dkvp" -c 1 python -m chvatal_smt "$formulation" "$n" --quiet &
+    done
+
+    for formulation in "${sat_formulations[@]}"; do 
+        # From https://www.baeldung.com/linux/creating-temp-file
+        dimacs_file=$(mktemp "/tmp/chvatal_smt-$formulation-$n.dimacs-XXXXXX")
+        trap "rm -f $TMPFILE" EXIT
+
+        python -m chvatal_smt "$formulation" "$n" \
+            --dimacs-file "$dimacs_file" --no-solve --quiet
+        srun --output="results/%j/$formulation-$n.dimacs" -c 1 kissat "$dimacs_file" &
+    done
+done
+
+wait
