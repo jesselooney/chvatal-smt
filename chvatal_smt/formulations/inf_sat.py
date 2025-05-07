@@ -74,5 +74,10 @@ def inf_sat(n: int) -> FormulationResult:
     solver.delete()
 
     # The Conjecture holds iff these constraints are unsatisfiable.
-    return FormulationResult(name="inf_sat", n=n, does_conjecture_hold=not result, constraint_count = len(clauses), runtime = end_time - start_time)
-
+    return FormulationResult(
+        name="inf_sat",
+        n=n,
+        does_conjecture_hold=not result,
+        constraint_count=len(clauses),
+        runtime=end_time - start_time,
+    )

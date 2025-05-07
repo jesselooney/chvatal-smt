@@ -79,4 +79,10 @@ def opt(n: int) -> FormulationResult:
 
     solver.exit()
 
-    return FormulationResult(name="opt",n=n,does_conjecture_hold=is_zero_feasible and not is_positive_feasible, constraint_count=constraints, runtime = end_time-start_time)
+    return FormulationResult(
+        name="opt",
+        n=n,
+        does_conjecture_hold=is_zero_feasible and not is_positive_feasible,
+        constraint_count=constraints,
+        runtime=end_time - start_time,
+    )

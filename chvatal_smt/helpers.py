@@ -25,7 +25,5 @@ class FormulationResult:
     constraint_count: int
     runtime: float
 
-
     def __str__(self):
         return f"name={self.name},n={self.n},does_conjecture_hold={self.does_conjecture_hold},constraint_count={self.constraint_count},runtime={self.runtime}"
-

@@ -72,4 +72,10 @@ def inf(n: int) -> FormulationResult:
 
     solver.exit()
 
-    return FormulationResult(name="inf", n=n, does_conjecture_hold=not is_satisfiable, constraint_count=constraints, runtime=end_time - start_time)
+    return FormulationResult(
+        name="inf",
+        n=n,
+        does_conjecture_hold=not is_satisfiable,
+        constraint_count=constraints,
+        runtime=end_time - start_time,
+    )

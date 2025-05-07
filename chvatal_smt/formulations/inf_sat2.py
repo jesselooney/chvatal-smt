@@ -62,15 +62,15 @@ def inf_sat2(n: int) -> FormulationResult:
         # TODO: verify that this is doing what I want it to
         cnfplus = PBEnc.geq(lits=lits, weights=weights, bound=1, vpool=vpool)
         clauses.extend(cnfplus.clauses)
-    
+
     # Encodings of previously proven chvatal results
     for t in I:
         if 0 < len(P[t]) and len(P[t]) < 3:
-            clauses.append([-y[t]]) # constraint 7f
+            clauses.append([-y[t]])  # constraint 7f
         if len(P[t]) == 1:
-            clauses.append([x[t]]) # constraint 7g
+            clauses.append([x[t]])  # constraint 7g
         elif P[t] <= set([1, 2, 3, 4]):
-            clauses.append([x[t]]) # constraint 7h
+            clauses.append([x[t]])  # constraint 7h
 
     """Checking the Conjecture"""
     formula = CNF(from_clauses=clauses)
@@ -83,5 +83,10 @@ def inf_sat2(n: int) -> FormulationResult:
     solver.delete()
 
     # The Conjecture holds iff these constraints are unsatisfiable.
-    return FormulationResult(name="inf_sat_red", n=n, does_conjecture_hold=not result, constraint_count = len(clauses), runtime = end_time - start_time)
-
+    return FormulationResult(
+        name="inf_sat_red",
+        n=n,
+        does_conjecture_hold=not result,
+        constraint_count=len(clauses),
+        runtime=end_time - start_time,
+    )
