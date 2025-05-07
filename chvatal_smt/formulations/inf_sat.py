@@ -1,4 +1,4 @@
-"""This file implements an SMT encoding of Eifler et al.'s optimality-based
+"""This file implements a SAT encoding of Eifler et al.'s infeasibility-based
 formulation, following the formulae in the paper as closely as possible. Where
 applicable, this file follows the conventions in chvatal_optprob.zpl in Eifler
 et al.'s MILP implementation.
@@ -14,8 +14,6 @@ import time
 
 
 def inf_sat(n: int) -> FormulationResult:
-    """Returns True iff downsets D such that |U(D)| <= n satisfy Chvatal's conjecture."""
-
     """Setup"""
     # N is [n] = {1, 2, ..., n}.
     N = list(range(1, n + 1))

@@ -10,9 +10,7 @@ from pysmt.shortcuts import Symbol, Plus, And, Solver, Int, Equals
 import time
 
 
-def red(n: int) -> FormulationResult:
-    """Returns True iff downsets D such that |U(D)| <= n satisfy Chvatal's conjecture."""
-
+def opt_red(n: int) -> FormulationResult:
     """Setup"""
     # N is [n] = {1, 2, ..., n}.
     N = list(range(1, n + 1))

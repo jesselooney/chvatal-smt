@@ -11,8 +11,6 @@ import time
 
 
 def opt(n: int) -> FormulationResult:
-    """Returns True iff downsets D such that |U(D)| <= n satisfy Chvatal's conjecture."""
-
     """Setup"""
     # N is [n] = {1, 2, ..., n}.
     N = list(range(1, n + 1))
