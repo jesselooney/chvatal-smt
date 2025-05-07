@@ -13,7 +13,7 @@ from pysat.formula import IDPool, CNF
 import time
 
 
-def inf_sat(n: int) -> FormulationResult:
+def inf_sat(n: int, *, dimacs_file = None) -> FormulationResult:
     """Setup"""
     # N is [n] = {1, 2, ..., n}.
     N = list(range(1, n + 1))
@@ -62,7 +62,11 @@ def inf_sat(n: int) -> FormulationResult:
         clauses.extend(cnfplus.clauses)
 
     """Checking the Conjecture"""
-    formula = CNF(from_clauses=clauses)
+    if dimacs_file is not None:
+        formula = CNF(from_clauses=clauses)
+        formula.to_file(dimacs_file)
+        return
+
     solver = Cadical195(bootstrap_with=clauses)
 
     start_time = time.perf_counter()
