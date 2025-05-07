@@ -4,13 +4,13 @@ From the root directory of the repository, follow the subsequent steps to set ev
 
 Create and enter a virtual environment:
 ```
-make .venv
+python3 -m venv .venv
 source .venv/bin/activate
 ```
 
 Install the dependencies:
 ```
-make install
+pip install -r requirements.txt
 ```
 
 Install a solver (e.g. Z3):
@@ -21,7 +21,7 @@ pysmt-install --z3
 
 Now you should be able to run the package:
 ```
-python -m chvatal_smt opt 3
+python -m chvatal_smt inf 3
 ```
 
 # Development
@@ -29,7 +29,7 @@ python -m chvatal_smt opt 3
 Remember to develop in the virtual environment, and please record and commit any dependencies you add:
 ```
 pip install foo
-make freeze
+pip freeze > requirements.txt
 ```
 
 Also, please format code with Ruff (included as a dependency):

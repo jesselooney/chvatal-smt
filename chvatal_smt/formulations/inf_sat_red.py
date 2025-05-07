@@ -4,16 +4,14 @@ applicable, this file follows the conventions in chvatal_optprob.zpl in Eifler
 et al.'s MILP implementation.
 """
 
-import sys
 import time
 from ..helpers import powerset, FormulationResult
 from pysat.solvers import Cadical195
 from pysat.pb import PBEnc
 from pysat.formula import IDPool, CNF
-import time
 
 
-def inf_sat_red(n: int, *, dimacs_file = None) -> FormulationResult:
+def inf_sat_red(n: int, *, dimacs_file=None) -> FormulationResult:
     """Setup"""
     # N is [n] = {1, 2, ..., n}.
     N = list(range(1, n + 1))

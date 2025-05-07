@@ -18,22 +18,29 @@ if __name__ == "__main__":
         "-q", "--quiet", action="store_true", help="Suppress intermediate output"
     )
     parser.add_argument(
-        "-d", "--dimacs-file", help="Output SAT constraints to a DIMACS file instead of solving")
+        "-d",
+        "--dimacs-file",
+        help="Output SAT constraints to a DIMACS file instead of solving",
+    )
 
     args = parser.parse_args()
 
     formulation = formulation_dict.get(args.formulation_name)
     assert formulation is not None
-    
+
     if not args.quiet:
-        print(f"Checking the Conjecture for {args.n=} using formulation {args.formulation_name}")
+        print(
+            f"Checking the Conjecture for {args.n=} using formulation {args.formulation_name}"
+        )
 
     if args.dimacs_file is not None:
         try:
             result = formulation(args.n, dimacs_file=args.dimacs_file)
             sys.exit(0)
         except TypeError:
-            raise Exception(f"Formulation {args.formulation_name} does not support DIMACS output")
+            raise Exception(
+                f"Formulation {args.formulation_name} does not support DIMACS output"
+            )
     else:
         result = formulation(args.n)
 
