@@ -1,5 +1,5 @@
 # Setup
-
+*Note: We observed that PBLib causes issues when running the SAT formulations on Windows.*
 From the root directory of the repository, follow the subsequent steps to set everything up.
 
 Create and enter a virtual environment:
