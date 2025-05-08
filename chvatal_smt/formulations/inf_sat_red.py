@@ -59,6 +59,16 @@ def inf_sat_red(n: int, *, should_solve=True, dimacs_file=None) -> FormulationRe
         cnfplus = PBEnc.geq(lits=lits, weights=weights, bound=1, vpool=vpool)
         clauses.extend(cnfplus.clauses)
 
+    # Constraint 7e
+    # It is trying to say that the twice the cardinality of the intersecting
+    # family is less than the cardinality of x
+    intersecting_family = [y[s] for s in I if len(P[s]) != 0]
+    family = [x[s] for s in I]
+    weights = [-2] * len(intersecting_family) + [1] * len(family)
+    lits = intersecting_family + family
+    cnfplus = PBEnc.geq(lits=lits, weights=weights, bound=1, vpool=vpool)
+    clauses.extend(cnfplus.clauses)
+
     # Encodings of previously proven chvatal results
     for t in I:
         if 0 < len(P[t]) and len(P[t]) < 3:
