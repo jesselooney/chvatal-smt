@@ -66,7 +66,7 @@ def inf_sat_red(n: int, *, should_solve=True, dimacs_file=None) -> FormulationRe
     family = [x[s] for s in I]
     weights = [-2] * len(intersecting_family) + [1] * len(family)
     lits = intersecting_family + family
-    cnfplus = PBEnc.geq(lits=lits, weights=weights, bound=1, vpool=vpool)
+    cnfplus = PBEnc.geq(lits=lits, weights=weights, bound=0, vpool=vpool)
     clauses.extend(cnfplus.clauses)
 
     # Encodings of previously proven chvatal results
