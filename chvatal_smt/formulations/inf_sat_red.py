@@ -45,8 +45,7 @@ def inf_sat_red(n: int, *, should_solve=True, dimacs_file=None) -> FormulationRe
 
     # S(y)\{0} has greater cardinality than every star in S(x) (1e).
     for i in N:
-        # TODO: explain this more clearly
-        # We implement constraint (1e) using a pseudo-boolean constraint.
+        # We implement constraint (1e) using a pseudo-boolean constraint. (see paper)
         star = [x[s] for s in I if i in P[s]]
         intersecting_family = [y[s] for s in I if len(P[s]) != 0]
 
@@ -55,7 +54,7 @@ def inf_sat_red(n: int, *, should_solve=True, dimacs_file=None) -> FormulationRe
         # intersecting family minus the cardinality of the star.
         weights = [1] * len(intersecting_family) + [-1] * len(star)
 
-        # TODO: verify that this is doing what I want it to
+        # PBLib generates SAT constraints here
         cnfplus = PBEnc.geq(lits=lits, weights=weights, bound=1, vpool=vpool)
         clauses.extend(cnfplus.clauses)
 
