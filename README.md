@@ -25,7 +25,7 @@ pysmt-install --z3
 ```
 *Make sure to accept the licenses by entering 'y'.*
 
-Now you should be able to run the package:
+Now you should be able to run the package, in the format ```python -m chvatal_smt {formulation} {n}```, e.g.:
 ```
 python -m chvatal_smt inf 3
 ```
