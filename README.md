@@ -5,7 +5,8 @@ This project translates the IP encodings of Chvátal's conjecture done by [Eifle
 COSC 345 Final Project. Allison Klingler, Jesse Looney, and Jonah McDonald. Amherst College.
 
 # Setup
-*Note: We observed that PBLib causes issues when running the SAT formulations on Windows.*
+*Note: We observed that PBLib causes issues when running the SAT formulations on Windows. We cannot guarantee everything works on systems other than GNU/Linux.*
+
 From the root directory of the repository, follow the subsequent steps to set everything up.
 
 Create and enter a virtual environment:
