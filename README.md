@@ -1,6 +1,6 @@
 # Info
 
-This project translates the IP encodings of Chvatal's Conjecture done by [Eifler et al.](https://arxiv.org/pdf/1809.01572) into SMT and SAT encodings in an effort to compare the strengths of each encoding type in automated theorem proving.
+This project translates the IP encodings of Chvátal's conjecture done by [Eifler et al.](https://arxiv.org/pdf/1809.01572) into SMT and SAT encodings in an effort to compare the strengths of each encoding type in automated theorem-proving.
 
 COSC 345 Final Project. Allison Klingler, Jesse Looney, and Jonah McDonald. Amherst College.
 
@@ -25,7 +25,7 @@ pysmt-install --z3
 ```
 *Make sure to accept the licenses by entering 'y'.*
 
-Now you should be able to run the package:
+Now you should be able to run the package, in the format ```python -m chvatal_smt {formulation} {n}```, e.g.:
 ```
 python -m chvatal_smt inf 3
 ```
