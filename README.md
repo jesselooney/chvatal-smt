@@ -1,3 +1,9 @@
+# Info
+
+This project translates the IP encodings of Chvatal's Conjecture done by [Eifler et al.](https://arxiv.org/pdf/1809.01572) into SMT and SAT encodings in an effort to compare the strengths of each encoding type in automated theorem proving.
+
+COSC 345 Final Project. Allison Klingler, Jesse Looney, and Jonah McDonald. Amherst College.
+
 # Setup
 
 From the root directory of the repository, follow the subsequent steps to set everything up.
